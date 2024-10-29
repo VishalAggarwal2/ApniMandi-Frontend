@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Inventory Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        .product-details {
+    margin-top: 20px;
+    padding: 10px;
+    text-align: center;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    color: #333;
+}
+
+
+        body {
+            height: 100vh;
+            background-color: #fdf1e3; /* Light peach background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 700px;
+            height: 80vh; /* Fixed height for scrollable interface */
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.1);
+            overflow-y: auto; /* Enable vertical scrolling */
+            position: relative;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .container::-webkit-scrollbar-thumb {
+            background-color: #f9a44c;
+            border-radius: 10px;
+        }
+
+        .container::-webkit-scrollbar-track {
+            background: #fdf1e3;
+        }
+
+        .container::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: -10px;
+            bottom: -10px;
+            background-color: #f9a44c; /* Orange shadow */
+            border-radius: 20px;
+            z-index: -1;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        img {
+            width: 120px; /* Increased logo size */
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            font-size: 28px; /* Increased font size */
+            margin-bottom: 20px;
+            color: #2c7a2f; /* Dark green */
+            font-weight: 700;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 20px; /* Increased font size */
+            margin-bottom: 15px;
+            color: #388e3c; /* Medium green */
+            font-weight: 600;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #555;
+            text-align: left;
+        }
+
+        input[type="text"], input[type="number"], input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: none;
+            border-radius: 30px;
+            background-color: #f9a44c; /* Orange background */
+            color: white;
+            font-size: 16px;
+            padding-left: 20px;
+        }
+
+        input[type="text"]::placeholder, 
+        input[type="number"]::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        input[type="text"]:focus, 
+        input[type="number"]:focus, 
+        input[type="date"]:focus {
+            outline: 2px solid #f07b0b; /* Darker orange on focus */
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        .file-input {
+            display: none; /* Hide the default file input */
+        }
+
+        .custom-file-label {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background-color: #f9a44c; /* Orange background */
+            color: white;
+            text-align: center;
+            border-radius: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .custom-file-label:hover {
+            background-color: #f07b0b; /* Darker orange */
+            transform: scale(1.05);
+        }
+
+        .file-selected {
+            margin-top: 5px;
+            font-size: 14px;
+            color: #555;
+            font-style: italic;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            font-size: 16px;
+        }
+
+        .btn-submit {
+            background-color: #28a745; /* Green */
+        }
+
+        .btn-submit:hover {
+            background-color: #218838; /* Darker green */
+            transform: scale(1.05);
+        }
+
+        .btn-update {
+            background-color: #5cb85c; /* Lighter green */
+        }
+
+        .btn-update:hover {
+            background-color: #4cae4c; /* Darker shade of light green */
+            transform: scale(1.05);
+        }
+
+        .btn-reset {
+            background-color: #388e3c; /* Medium green */
+        }
+
+        .btn-reset:hover {
+            background-color: #2e7d32; /* Darker medium green */
+            transform: scale(1.05);
+        }
+
+        .inline-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .inline-group .form-group {
+            flex: 1;
+        }
+
+        .form-group {
+            margin-top: 10px;
+            text-align: left;
+        }
+        .logout{
+            background-color: red;
+            color: white;
+            margin: auto;
+            padding: 10px;
+            border: black;
+            border-radius:20PX ;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img src="Apni Mandi.png" alt="Logo"> <!-- Logo added here -->
+        <h1>Product Inventory Management</h1>
+        <button class="logout" onclick="logout()">Logout</button>
+        <h2>Last Product Added: <span id="lastProduct">None</span></h2>
+
+        <form id="inventoryForm" onsubmit="handleSubmit(event)">
+            <div class="form-group">
+                <input type="text" id="vendor" name="vendor" list="vendorList"
+                placeholder="Choose or type vendor name" />
+
+            <!-- Datalist for the dropdown -->
+            <datalist id="vendorList">
+                <option value="Abdul Hamidi"></option>   
+                           
+                       <option value="Afghan Spice LLC"></option>                     
+                       <option value="Akshar Sales LLC"></option>                     <option value="ARAM TRADERS LLC"></option>                     <option value="Ariana Sweets"></option>                     <option value="Babco Foods international"></option>                     <option value="BIMBO BAKERS USA INS"></option>                     <option value="Inc. Bondsforever"></option>                     <option value="Cheetah"></option>                     <option value="Chetak Sanfranciso LLC"></option>                     <option value="Costco Business Center"></option>                     <option value="Dairy Delivery inc."></option>                     <option value="DARBAR FOODS"></option>                     <option value="Deccan Foods"></option>                     <option value="DEEP FOODS INS"></option>                     <option value="Delight Foods LLC."></option>                     <option value="Desi Milk"></option>                     <option value="Desi Taste, Inc."></option>                     <option value="Dev Foods inc"></option>                     <option value="DHANRAJ"></option>                     <option value="DHANYA FOODS LLC"></option>                     <option value="Ecoideas USA"></option>                     <option value="Foods & More Inc."></option>                     <option value="Fyve Elements LLC"></option>                     <option value="GMS INT'L Foods Inc. (Tracy)"></option>                     <option value="Gold Coast Distributors Inc."></option>                     <option value="Guru Distributors inc."></option>                     <option value="HALALKOOM"></option>                     <option value="Hathi Brand Foods Ins."></option>                     <option value="Heritage Bakery Holdings LLC"></option>                     <option value="Hot Breads"></option>                     <option value="House Of Spices (India) Inc"></option>                     <option value="Ilika Enterprise"></option>                     <option value="India's Fine Foods, Inc"></option>                     <option value="Indian Cookware & Appliance LLC"></option>                     <option value="Indian Pride"></option>                     <option value="International Bread"></option>                     <option value="Javier Lopez"></option>                     <option value="Jaymin Enterprises Corp."></option>                     <option value="K.K.Trader's"></option>                     <option value="Karoun Dairies LLC."></option>                     <option value="Kashmir Snacks International"></option>                     <option value="Keyswood Global LLC"></option>                     <option value="Kisaan International, INC."></option>                     <option value="KNP Management LLC"></option>                     <option value="L.K. Produce, Inc."></option>                     <option value="Linton Paper & Supply"></option>                     <option value="Madinah Books & Gifts"></option>                     <option value="Markets First"></option>                     <option value="Marketspace LLC"></option>                     <option value="Masalafusion.US"></option>                     <option value="Memorable India"></option>                     <option value="Monash Global LLC"></option>                     <option value="Moonee Inc."></option>                     <option value="MQR Solutions"></option>                     <option value="Nature's Guru"></option>                     <option value="New Desi Bazaar"></option>                     <option value="Numark"></option>                     <option value="Off The Record"></option>                     <option value="Olive Land & More"></option>                     <option value="ONESTOP VENTURES"></option>                     <option value="Pani Puri Company"></option>                     <option value="PAP Product Distributors Inc."></option>                     <option value="Pints Of Joy LLC"></option>                     <option value="Pitco Foods"></option>                     <option value="Plaztigo Ultimate Choice"></option>                     <option value="Portall Pacific LLC"></option>                     <option value="Prasad Island Market"></option>                     <option value="Prime Wholesalers & Dist."></option>                     <option value="R & J Garden Produce, Inc"></option>                     <option value="R K Farms"></option>                     <option value="Rahein Inc."></option>                     <option value="Real Ice Cream"></option>                     <option value="Restaurant Depot, Store #62"></option>                     <option value="Roank Imports"></option>                     <option value="S & L Wholesale Produce LLC"></option>                     <option value="S T C Dist. Co."></option>                     <option value="San Francisco Naturals Inc."></option>                     <option value="Satya Sweets Ganesh Batter"></option>                     <option value="Sensational Foods"></option>                     <option value="Shahi Kulfi Ice Cream"></option>                     <option value="Shastha Produce"></option>                     <option value="Shine Impex Inc"></option>                     <option value="Shivron Enterpriese LLC"></option>                     <option value="Shrinath Trading LLC"></option>                     <option value="SLT FOODS INC"></option>                     <option value="Spicy World V, LLC"></option>                     <option value="Sri Surya Foods LLC"></option>                     <option value="Sunrise Food Dist. Inc."></option>                     <option value="Surati CA LLC"></option>                     <option value="T & S Produce Co, Inc."></option>                     <option value="Tang's Restaurant Service, Inc"></option>                     <option value="Thal Golden Spices Inc."></option>                     <option value="The Best Foods Commodities Inc."></option>                     <option value="The Desi Distribution"></option>                     <option value="The Everest Bakery"></option>                     <option value="The ZZ Group Inc."></option>                     <option value="Turkana Valley Food LLC"></option>                     <option value="U.S. Spices Corporation"></option>                     <option value="ULINE Shipping Supply Specialists"></option>                     <option value="United Cold Storage"></option>                     <option value="United Food Delicacies LLC"></option>                     <option value="Universal Connect Wholesale, LLC"></option>                     <option value="Vadilal Industries (USA) Inc."></option>                     <option value="Venzu Traders LLC"></option>                     <option value="nan"></option>                     <option value="Verka Usa"></option>                     <option value="Vitaplus US Inc."></option>                     <option value="Washington Vegetable Co."></option>                     <option value="West Coast Foods Cal ins."></option>                     <option value="What A Tomato"></option>                     <option value="WMT logistics"></option>                     <option value="X'Pressions"></option>                     <option value="Zee Foods, LLC"></option>                     <option value="ZENITH 11 DISTRIBUTORS LLC"></option>                     <option value="Golden Choice Distributors LLC"></option>                     <option value="NAB SPICE HOUSE"></option>                     <option value="NATURAL FOOD IMPORTS LLC"></option>                     <option value="GOYA FOODS OF CALIFORNIA"></option>                     <option value="Gurudev Imports Inc"></option>                     <option value="AOT Produce"></option>                     <option value="ASAP Sons & Group Inc."></option>                     <option value="Banner Fruit Co."></option>                     <option value="Bhanu Implex LLC"></option>                     <option value="Chong's Produce Inc."></option>                     <option value="Coast Tropical - SF"></option>                     <option value="Daaks International"></option>                     <option value="Great West Gourmet"></option>                     <option value="Growers Distribution "></option>                     <option value="Growers Produce"></option>                     <option value="Harvest Joy Produce"></option>                     <option value="J.C. Cheyne & Co."></option>                     <option value="Javier Lopez Produce"></option>                     <option value="K&J Dola Farm Fresh Produce Locally Grown"></option>                     <option value="Kay Bee Fruits Inc."></option>                     <option value="Kotecha Brothers LLC"></option>                     <option value="L.K. Produce, Inc."></option>                     <option value="Mona Foods"></option>                     <option value="Mt. Tam Fresh Inc."></option>                     <option value="Redwood Produce, Inc."></option>                     <option value="RK Farms"></option>                     <option value="Samra Produce"></option>                     <option value="Shasta Produce"></option>                     <option value="T.M. Summit, Inc."></option>                     <option value="T&S Produce, Inc."></option>                     <option value="The ZZ Group Inc."></option>                     <option value="Washington Vegetable Co."></option>                     <option value="Palo Alto Foods"></option>                     <option value="LT Foods Americas, Inc"></option>                     <option value="Santos"></option>                     <option value="Kaytee"></option>                     <option value="A.J. Southall"></option>                     <option value="A.C.C. Healthcare"></option>
+            </datalist>
+            </div>
+            <div class="form-group">
+                <label for="invoiceNo">Invoice No./ PO No.:</label>
+                <input type="text" id="invoiceNo" placeholder="Enter invoice number" required>
+            </div>
+
+            <div class="form-group">
+                <label for="barcode">Enter Barcode or SKU:</label>
+                <input type="text" id="barcode" placeholder="Scan or type barcode" required>
+                <button type="button" class="btn" onclick="handleScan()">Scan Barcode</button>
+            </div>
+
+            <h2>Product Details</h2>
+            <div id="productDetails" class="product-details">
+                <!-- Product details will be displayed here after scanning -->
+            </div>
+            
+
+            <div class="inline-group">
+                <div class="form-group">
+                    <label for="quantity">Quantity per Carton:</label>
+                    <input type="number" id="quantity" placeholder="Enter quantity per carton" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="cartons">No. of Cartons:</label>
+                    <input type="number" id="cartons" placeholder="Enter no of cartons" min="0" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="productImage">Capture Product Image:</label>
+                <div class="file-input-wrapper">
+                    <label class="custom-file-label" for="productImage">Choose Image</label>
+                    <input type="file" id="productImage" class="file-input" accept="image/*" onchange="displayFileName(this)">
+                    <span id="fileSelected" class="file-selected">No file selected</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="expiryDate">Expiry Date:</label>
+                <input type="date" id="expiryDate">
+            </div>
+
+            <div class="form-group">
+                <label for="productLost">Is Product Lost:</label>
+                <input type="text" placeholder="Enter Price If Lost" id="productLost">
+            </div>
+
+            <button type="submit" onclick="handleSubmit()" class="btn btn-submit">Submit</button>
+            <button type="button" class="btn btn-update" onclick="updateInventory()">Update Inventory</button>
+            <button type="button" class="btn btn-reset" onclick="resetForm()">Reset</button>
+        </form>
+    </div>
+
+    <script>
+
+      async function handleScan() {
+    const barcodeInput = document.getElementById("barcode");
+    const barcode = barcodeInput.value || "Scanned Barcode"; // Replace with actual scanned value
+
+    try {
+        const response = await fetch('http://localhost:3000/product', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ barcode })
+        });
+
+        if (!response.ok) {
+            throw new Error('Product not found');
+        }
+
+        const product = await response.json();
+        displayProductDetails(product);
+    } catch (error) {
+        console.error('Error fetching product:', error);
+        displayProductDetails({ error: error.message });
+    }
+}
+
+function displayProductDetails(product) {
+    const productDetailsSection = document.getElementById("productDetails");
+localStorage.setItem("productName",product.productName);
+    if (product.error) {
+        productDetailsSection.innerHTML = `<p>${product.error}</p>`;
+    } else {
+        productDetailsSection.innerHTML = `
+            <p><strong>Product Name:</strong> ${product.productName}</p>
+            <p><strong>SKU:</strong> ${product.sku || 'N/A'}</p>
+            <p><strong>Barcode:</strong> ${product.barcode}</p>
+        `;
+    }
+}
+
+
+        function displayFileName(input) {
+            const fileSelected = document.getElementById("fileSelected");
+            if (input.files && input.files[0]) {
+                fileSelected.textContent = input.files[0].name;
+            } else {
+                fileSelected.textContent = "No file selected";
+            }
+        }
+// Function to check if the page is protected
+async function checkPageProtection() {
+    try {
+        const token = localStorage.getItem("token");
+        console.log(token);
+
+// If no token is found, redirect to index.html
+if (!token) {
+    console.error("No token found, redirecting to login page.");
+    window.location.href = "index.html";
+    return null;
+}
+
+const response = await fetch("http://localhost:3000/user/tokendata", {
+    method: "POST", // Change method to POST
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ token }) // Send the token in the body
+});
+
+
+        if (!response.ok) {
+            throw new Error("User not authenticated");
+        }
+
+        const userData = await response.json();
+        console.log("User data:", userData);
+        
+        if(userData.role!="Product Management"){
+        window.location.href = "index.html";
+
+        }
+
+        // Return user data for inclusion in handleSubmit
+        return userData;
+    } catch (error) {
+        console.error("User not authenticated:", error);
+        // Redirect to index.html if the user isn't authenticated
+        window.location.href = "index.html";
+    }
+}
+
+// Modified handleSubmit function
+async function handleSubmit(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    // Check if the page is protected and retrieve user data
+    const userData = await checkPageProtection();
+    if (!userData) return; // Stop further execution if user is redirected
+
+    // Collect form data
+    const data = {
+        barcodeOrSKU: document.getElementById("barcode").value,
+        quantityPerCarton: document.getElementById("quantity").value,
+        noOfCarton: document.getElementById("cartons").value,
+        establishment: userData.establishmentId || "YourEstablishmentName",
+        username: userData.username || "UserName",
+        imagery: document.getElementById("fileSelected").textContent,
+        role: userData.role || "UserRole",
+        productName: localStorage.getItem("productName"),
+        vendorName: document.getElementById("vendor").value,
+        invoiceNumber: document.getElementById("invoiceNo").value,
+        expiryDate: document.getElementById("expiryDate").value,
+        isProductLost: document.getElementById("productLost").value==""?false:true
+    };
+
+    // Log data to console
+    console.log(data);
+
+    try {
+        // Send the data to the server
+        const response = await fetch("http://localhost:3000/inventory/inventory", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to send inventory data");
+        }
+
+        const responseData = await response.json();
+        console.log("Response from server:", responseData);
+
+        // Update the UI
+        document.getElementById("lastProduct").textContent = data.productName || "N/A";
+        resetForm(); // Reset form after submission
+        alert("Data successfully submitted!");
+    } catch (error) {
+        console.error("Error submitting data:", error);
+    }
+}
+
+// Call checkPageProtection when the page loads to ensure protection
+window.addEventListener("load", checkPageProtection);
+
+
+
+        // function handleSubmit(event) {
+        //     event.preventDefault(); // Prevent form submission
+        //     const lastProductElement = document.getElementById("lastProduct");
+        //     const productName = document.getElementById("productName").value;
+        //     lastProductElement.textContent = productName; // Update the last product added
+        //     resetForm(); // Reset the form after submission
+        // }
+
+        function updateInventory() {
+            // Placeholder for inventory update logic
+            alert("Inventory updated!"); // Simulate inventory update
+        }
+
+        function resetForm() {
+            document.getElementById("inventoryForm").reset();
+            document.getElementById("fileSelected").textContent = "No file selected"; // Reset file selection
+        }
+
+
+
+
+        async function fetchRecentProducts() {
+    try {
+        // Check if the page is protected and retrieve user data
+        const userData = await checkPageProtection();
+        if (!userData) return; // Stop further execution if user is redirected
+
+        // Prepare the request body with the username
+        const requestBody = {
+            username: userData.username // Use the username from userData
+        };
+
+        // Fetch recent products
+        const response = await fetch("http://localhost:3000/inventory/recentproduct", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(requestBody) // Send the request body
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch recent products");
+        }
+
+        const recentProducts = await response.json();
+        console.log("Recent Products:", recentProducts);
+        // Update the last product added and display the products
+        displayLastProduct(recentProducts);
+    } catch (error) {
+        console.error("Error fetching recent products:", error);
+    }
+}
+
+// Function to display the last product added
+function displayLastProduct(products) {
+    const lastProductElement = document.getElementById("lastProduct");
+
+    
+    // Update the last product displayed
+    lastProductElement.textContent = products.lastProduct || "Unknown Product"; // Fallback in case of undefined name
+}
+
+// Call fetchRecentProducts when the page loads
+window.addEventListener("load", fetchRecentProducts);
+
+
+
+function logout(){
+    window.location.href = "index.html";
+    localStorage.setItem("token","");
+}
+    </script>
+</body>
+</html>

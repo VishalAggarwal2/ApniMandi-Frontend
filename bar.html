@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barcode and Quantity Entry</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background-color: #fdf1e3; /* Light peach background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 500px; /* Increased max width */
+            background-color: #fff;
+            padding: 40px; /* Increased padding */
+            border-radius: 20px;
+            box-shadow: 8px 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+        }
+
+        .container::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: -10px;
+            bottom: -10px;
+            background-color: #f9a44c; /* Orange shadow */
+            border-radius: 20px;
+            z-index: -1;
+        }
+
+        img {
+            width: 120px; /* Increased logo size */
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h1 {
+            font-size: 28px; /* Increased font size */
+            margin-bottom: 20px;
+            color: #2c7a2f; /* Green shade for heading */
+            font-weight: 600;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px; /* Increased spacing */
+            font-size: 18px; /* Increased font size */
+            font-weight: 500;
+            color: #555;
+            text-align: left;
+        }
+
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 15px; /* Increased padding */
+            margin: 10px 0 25px; /* Adjusted spacing */
+            border: none;
+            border-radius: 30px;
+            background-color: #f9a44c; /* Orange background for input */
+            color: white;
+            font-size: 18px; /* Increased font size */
+            padding-left: 20px;
+        }
+
+        input[type="text"]::placeholder, input[type="number"]::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        input[type="text"]:focus, input[type="number"]:focus {
+            outline: 2px solid #f07b0b; /* Darker orange on focus */
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px; /* Increased padding */
+            margin-top: 20px; /* Increased top margin for better spacing */
+            font-size: 18px; /* Increased font size */
+            border: none;
+            border-radius: 30px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn-scan {
+            background-color: #5cb85c; /* Lighter green */
+            color: white;
+        }
+
+        .btn-scan:hover {
+            background-color: #4cae4c; /* Darker shade of light green */
+            transform: scale(1.05);
+        }
+
+        .btn-submit {
+            background-color: #28a745; /* Green */
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background-color: #218838; /* Darker green */
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="Apni Mandi.png" alt="Logo"> <!-- Logo added here -->
+        <h1>User Count</h1>
+        <form id="entryForm" onsubmit="handleSubmit(event)">
+            <label for="barcode">Enter Barcode</label>
+            <input type="text" id="barcode" placeholder="Enter Barcode" required>
+
+            <label for="quantity">Enter Quantity</label>
+            <input type="number" id="quantity" placeholder="Enter Quantity" min="0" required>
+
+            <button type="button" class="btn btn-scan" onclick="handleScan()">Scan</button>
+            <button type="submit" class="btn btn-submit">Submit</button>
+        </form>
+    </div>
+
+    <script>
+        function handleScan() {
+            const barcode = document.getElementById('barcode').value;
+            if (barcode) {
+                alert(`Scanning barcode: ${barcode}`);
+            } else {
+                alert('Please enter a barcode before scanning.');
+            }
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            const barcode = document.getElementById('barcode').value;
+            const quantity = document.getElementById('quantity').value;
+
+            if (barcode && quantity) {
+                alert(`Submitted:\nBarcode: ${barcode}\nQuantity: ${quantity}`);
+                document.getElementById('entryForm').reset();
+            } else {
+                alert('Please fill out all fields.');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Container */
+        .container {
+            width: 90%;
+            height: 90vh;
+            background-color: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-bar {
+            width: 250px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .create-user-btn, .logout-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            color: white;
+        }
+
+        .create-user-btn {
+            background-color: #28a745;
+        }
+
+        .logout-btn {
+            background-color: #ff5722;
+        }
+
+        /* Table */
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            table-layout: fixed; /* Ensures consistent column width */
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        thead {
+            background-color: #f1f3f5;
+            font-weight: 500;
+        }
+
+        th, td {
+            padding: 16px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        th {
+            font-weight: bold;
+        }
+
+        td {
+            word-break: break-word;
+        }
+
+        .delete-btn {
+            background-color: #ff5722;
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            border: none;
+            padding: 8px 12px;
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.hidden {
+            display: none;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 400px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .input-wrapper input,
+        .input-wrapper select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-top: 5px;
+        }
+
+        .submit-btn {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Employees</h1>
+            <p>Showing data over the last 30 days</p>
+            <div class="header-controls">
+                <input type="text" placeholder="Search here..." class="search-bar">
+                <button class="create-user-btn" onclick="toggleModal()">Create User</button>
+                <button class="logout-btn">Logout</button>
+            </div>
+        </header>
+
+        <table class="user-table" id="userTable">
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Role</th>
+                    <th>Establishment</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Users will be dynamically inserted here -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Create User Modal -->
+    <div class="modal hidden" id="userModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="toggleModal()">×</button>
+            <h2>Create New User</h2>
+            <form id="userForm" onsubmit="handleSubmit(event)">
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <div class="input-wrapper">
+                        <input type="text" id="username" placeholder="Enter username" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <input type="password" id="password" placeholder="Enter password" required>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="role">Role</label>
+                    <div class="input-wrapper">
+                        <select id="role" required>
+                            <option value="Waste Management">Waste Management</option>
+                            <option value="Product Management">Product Management</option>
+                            <option value="Count User">Count User</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="establishment">Establishment-ID</label>
+                    <div class="input-wrapper">
+                        <select id="establishment" required>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">Create User</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        async function fetchUsers() {
+            const response = await fetch('http://localhost:3000/user');
+            const users = await response.json();
+            const tableBody = document.getElementById('userTable').querySelector('tbody');
+            tableBody.innerHTML = ''; // Clear the table before populating
+
+            users.forEach(user => {
+                const row = tableBody.insertRow();
+                row.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>${user.password}</td>
+                    <td>${user.role}</td>
+                    <td>${user.establishmentId}</td>
+                    <td><button class="delete-btn" onclick="deleteUser('${user.name}', ${user.establishmentId}, this)">Delete</button></td>
+                `;
+            });
+        }
+
+        async function handleSubmit(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            const establishment = document.getElementById('establishment').value;
+
+            const response = await fetch('http://localhost:3000/user/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: username, password, role, establishmentId: establishment }),
+            });
+
+            if (response.ok) {
+                await fetchUsers(); // Refresh the user list
+                toggleModal(); // Close the modal
+                document.getElementById('userForm').reset(); // Reset the form
+            } else {
+                console.error('Error creating user');
+            }
+        }
+
+        async function deleteUser(name, establishmentId, button) {
+            const response = await fetch(`http://localhost:3000/user/delete/${name}/${establishmentId}`, {
+                method: 'DELETE',
+            });
+
+            if (response.ok) {
+                button.closest('tr').remove(); // Remove the row from the table
+                await fetchUsers(); // Refresh the user list
+            } else {
+                console.error('Error deleting user');
+            }
+        }
+
+        function toggleModal() {
+            const modal = document.getElementById('userModal');
+            modal.classList.toggle('hidden');
+        }
+
+        // Initial fetch of users
+        fetchUsers();
+
+
+
+        // Function to check if the page is protected
+async function checkPageProtection() {
+    try {
+        const token = localStorage.getItem("token");
+        console.log(token);
+
+// If no token is found, redirect to index.html
+if (!token) {
+    console.error("No token found, redirecting to login page.");
+    window.location.href = "index.html";
+    return null;
+}
+
+const response = await fetch("http://localhost:3000/user/tokendata", {
+    method: "POST", // Change method to POST
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ token }) // Send the token in the body
+});
+
+
+        if (!response.ok) {
+            throw new Error("User not authenticated");
+        }
+
+        const userData = await response.json();
+        console.log("User data:", userData);
+        
+        if(userData.role!="admin"){
+        window.location.href = "index.html";
+
+        }
+
+        // Return user data for inclusion in handleSubmit
+        return userData;
+    } catch (error) {
+        console.error("User not authenticated:", error);
+        // Redirect to index.html if the user isn't authenticated
+        window.location.href = "index.html";
+    }
+}
+window.addEventListener("load", checkPageProtection);
+
+    </script>
+</body>
+</html>
